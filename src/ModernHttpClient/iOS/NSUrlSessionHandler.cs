@@ -278,6 +278,15 @@ namespace ModernHttpClient
                     }
                     return;
                 }
+                else if (challenge.ProtectionSpace.AuthenticationMethod != NSUrlProtectionSpace.AuthenticationMethodServerTrust)
+                {
+                    var networkCredentials = This.Credentials as NetworkCredential;
+                    if (networkCredentials != null)
+                    {
+                        var credential = new NSUrlCredential(networkCredentials.UserName, networkCredentials.Password, NSUrlCredentialPersistence.ForSession);
+                        completionHandler(NSUrlSessionAuthChallengeDisposition.UseCredential, credential);
+                    }             
+                }
 
                 if (!This.customSSLVerification) {
                     goto doDefault;
